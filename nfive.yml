@@ -1,0 +1,15 @@
+name: NFive/plugin-debug
+version: 1.0.0
+description: Debug and development tools
+author: NFive
+license: LGPL
+server:
+  main:
+    - NFive.Debug.Server
+  include:
+    - NFive.Debug.Shared.net
+client:
+  main:
+    - NFive.Debug.Client
+  include:
+    - NFive.Debug.Shared.net
