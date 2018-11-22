@@ -7,9 +7,9 @@ server:
   main:
     - NFive.Debug.Server
   include:
-    - NFive.Debug.Shared.net
+    - NFive.Debug.Shared
 client:
   main:
     - NFive.Debug.Client
   include:
-    - NFive.Debug.Shared.net
+    - NFive.Debug.Shared
