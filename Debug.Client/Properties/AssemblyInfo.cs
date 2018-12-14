@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using NFive.SDK.Client;
 
-[assembly: ClientPlugin]
+[assembly: ClientPlugin(1)]
 
 [assembly: AssemblyTitle("NFive Debug")]
 [assembly: AssemblyDescription("Debug and development tools")]
