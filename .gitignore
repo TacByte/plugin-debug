@@ -1,7 +1,7 @@
-plugins/
-.vs/
-bin/
+/.vs/
+/packages/
+/plugins/
+/Overlays/
+/*.dll
 obj/
-packages/
 *.user
-*.dll
