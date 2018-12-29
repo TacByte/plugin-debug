@@ -2,6 +2,8 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using JetBrains.Annotations;
+using NFive.Debug.Shared;
+using NFive.SDK.Client.Commands;
 using NFive.SDK.Client.Events;
 using NFive.SDK.Client.Interface;
 using NFive.SDK.Client.Rpc;
@@ -13,8 +15,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using NFive.Debug.Shared;
-using NFive.SDK.Client.Commands;
 
 namespace NFive.Debug.Client
 {
@@ -35,10 +35,10 @@ namespace NFive.Debug.Client
 
 			this.Logger.Debug($"Activate key set to {this.ActivateKey}");
 
-			this.Ticks.Attach(Tick);
+			this.Ticks.Attach(new Action(Tick));
 		}
 
-		private async Task Tick()
+		private void Tick()
 		{
 			if (Game.IsControlJustPressed(2, this.ActivateKey))
 			{
@@ -61,8 +61,6 @@ namespace NFive.Debug.Client
 				HighlightObject(this.Tracked);
 				DrawData(this.Tracked);
 			}
-
-			await Task.FromResult(0);
 		}
 
 		private void DrawCrosshair()

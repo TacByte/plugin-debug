@@ -13,7 +13,12 @@ namespace NFive.Debug.Server
 	{
 		public DebugController(ILogger logger, IEventManager events, IRpcHandler rpc, IRconManager rcon, Configuration configuration) : base(logger, events, rpc, rcon, configuration)
 		{
-			this.Rpc.Event(DebugEvents.GetConfig).On(e => e.Reply((IConfiguration)this.Configuration));
+			this.Rpc.Event(DebugEvents.GetConfig).On(e => e.Reply(this.Configuration));
+		}
+
+		public override void Reload(Configuration configuration)
+		{
+			this.Rpc.Event(DebugEvents.GetConfig).Trigger(configuration);
 		}
 	}
 }

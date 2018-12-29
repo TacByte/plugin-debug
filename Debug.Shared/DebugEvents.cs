@@ -2,6 +2,6 @@ namespace NFive.Debug.Shared
 {
 	public static class DebugEvents
 	{
-		public static readonly string GetConfig = "debug:config";
+		public const string GetConfig = "nfive:debug:config";
 	}
 }
