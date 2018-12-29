@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using NFive.Debug.Shared;
+using NFive.SDK.Client.Commands;
 
 namespace NFive.Debug.Client
 {
@@ -25,7 +26,7 @@ namespace NFive.Debug.Client
 		public Entity Tracked;
 		public readonly PlayerList Players = new PlayerList();
 
-		public DebugService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, OverlayManager overlay, User user) : base(logger, ticks, events, rpc, overlay, user) { }
+		public DebugService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, ICommandManager commands, OverlayManager overlay, User user) : base(logger, ticks, events, rpc, commands, overlay, user) { }
 
 		public override async Task Started()
 		{
