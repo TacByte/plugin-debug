@@ -21,45 +21,52 @@ namespace NFive.Debug.Client
 	[PublicAPI]
 	public class DebugService : Service
 	{
-		public Control ActivateKey;
-		public bool Enabled;
-		public Entity Tracked;
-		public readonly PlayerList Players = new PlayerList();
+		private Configuration config;
+		private Control activateKey;
+		private bool enabled;
+		private Entity tracked;
+		private readonly PlayerList players = new PlayerList();
 
 		public DebugService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, ICommandManager commands, OverlayManager overlay, User user) : base(logger, ticks, events, rpc, commands, overlay, user) { }
 
 		public override async Task Started()
 		{
-			var config = await this.Rpc.Event(DebugEvents.GetConfig).Request<Configuration>();
-			this.ActivateKey = (Control)Enum.Parse(typeof(Control), config.ActivateKey, true);
+			this.config = await this.Rpc.Event(DebugEvents.Configuration).Request<Configuration>();
+			this.activateKey = (Control)Enum.Parse(typeof(Control), this.config.ActivateKey, true);
 
-			this.Logger.Debug($"Activate key set to {this.ActivateKey}");
+			this.Logger.Debug($"Activate key set to {this.config.ActivateKey}");
+
+			this.Rpc.Event(DebugEvents.Configuration).On<Configuration>((e, c) =>
+			{
+				this.config = c;
+				this.activateKey = (Control)Enum.Parse(typeof(Control), this.config.ActivateKey, true);
+			});
 
 			this.Ticks.Attach(new Action(Tick));
 		}
 
 		private async void Tick()
 		{
-			if (Game.IsControlJustPressed(2, this.ActivateKey))
+			if (Game.IsControlJustPressed(2, this.activateKey))
 			{
-				this.Enabled = !this.Enabled;
+				this.enabled = !this.enabled;
 
-				Screen.ShowNotification($"Debug tools are now {(this.Enabled ? "~g~enabled" : "~r~disabled")}~s~.");
+				Screen.ShowNotification($"Debug tools are now {(this.enabled ? "~g~enabled" : "~r~disabled")}~s~.");
 			}
 
-			if (!this.Enabled) return;
+			if (!this.enabled) return;
 
 			if (Game.IsControlPressed(2, Control.Aim)) // Right click
 			{
 				DrawCrosshair();
 
-				this.Tracked = GetEntityInCrosshair();
+				this.tracked = GetEntityInCrosshair();
 			}
 
-			if (this.Tracked != null)
+			if (this.tracked != null)
 			{
-				HighlightObject(this.Tracked);
-				DrawData(this.Tracked);
+				HighlightObject(this.tracked);
+				DrawData(this.tracked);
 			}
 
 			var waypoint = World.WaypointPosition;
@@ -143,7 +150,7 @@ namespace NFive.Debug.Client
 
 			if (!entity.Exists())
 			{
-				this.Tracked = null;
+				this.tracked = null;
 
 				return list;
 			}
@@ -153,7 +160,7 @@ namespace NFive.Debug.Client
 				list["Model Name"] = GetModelName(entity.Model);
 				list[""] = "";
 
-				var player = this.Players.FirstOrDefault(p => p.Character == entity);
+				var player = this.players.FirstOrDefault(p => p.Character == entity);
 				if (player != null)
 				{
 					list["Player Name"] = player.Name;
