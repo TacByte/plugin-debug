@@ -38,7 +38,7 @@ namespace NFive.Debug.Client
 			this.Ticks.Attach(new Action(Tick));
 		}
 
-		private void Tick()
+		private async void Tick()
 		{
 			if (Game.IsControlJustPressed(2, this.ActivateKey))
 			{
@@ -61,6 +61,26 @@ namespace NFive.Debug.Client
 				HighlightObject(this.Tracked);
 				DrawData(this.Tracked);
 			}
+
+			var waypoint = World.WaypointPosition;
+			if (waypoint == Vector3.Zero) return;
+
+			var entity = Game.PlayerPed.IsInVehicle() ? (Entity)Game.PlayerPed.CurrentVehicle : Game.PlayerPed;
+
+			// ReSharper disable once CompareOfFloatsByEqualityOperator
+			while (waypoint.Z == 0f)
+			{
+				entity.PositionNoOffset = waypoint;
+
+				await Delay(0);
+
+				waypoint.Z = World.GetGroundHeight(new Vector2(waypoint.X, waypoint.Y));
+			}
+
+			entity.PositionNoOffset = waypoint;
+			GameplayCamera.RelativeHeading = 0;
+
+			World.RemoveWaypoint();
 		}
 
 		private void DrawCrosshair()
