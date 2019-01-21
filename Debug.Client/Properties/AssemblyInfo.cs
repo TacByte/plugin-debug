@@ -9,7 +9,7 @@ using NFive.SDK.Client;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("NFive")]
 [assembly: AssemblyProduct("NFive Debug Client Plugin")]
-[assembly: AssemblyCopyright("Copyright © NFive 2018")]
+[assembly: AssemblyCopyright("Copyright © NFive 2018-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
