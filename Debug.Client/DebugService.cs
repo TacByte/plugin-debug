@@ -2,6 +2,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using JetBrains.Annotations;
+using NFive.Debug.Client.Commands;
 using NFive.Debug.Shared;
 using NFive.SDK.Client.Commands;
 using NFive.SDK.Client.Events;
@@ -41,6 +42,10 @@ namespace NFive.Debug.Client
 				this.config = c;
 				this.activateKey = (Control)Enum.Parse(typeof(Control), this.config.ActivateKey, true);
 			});
+
+			this.Commands.Register("ipl-load", a => IplCommands.Load(this.Logger, a));
+			this.Commands.Register("ipl-unload", a => IplCommands.Unload(this.Logger, a));
+			this.Commands.Register("inv", a => PlayerCommands.Invincible(this.Logger, a.ToList()));
 
 			this.Ticks.Attach(new Action(Tick));
 		}

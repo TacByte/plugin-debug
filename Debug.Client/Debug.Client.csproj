@@ -60,6 +60,9 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\PlayerCommands.cs" />
+    <Compile Include="Commands\IplCommands.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="ObjectHash.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DebugService.cs" />
