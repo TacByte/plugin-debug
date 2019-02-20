@@ -15,13 +15,22 @@ namespace NFive.Debug.Client.Commands
 			{
 				logger.Debug("Vehicle Commands: Missing arguments");
 			}
-			else
+
+			if (args[0].Equals("spawn"))
 			{
-				if (args[0].Equals("spawn"))
-				{
-					SpawnVehicle(logger, args[1]);
-				}
+				SpawnVehicle(logger, args[1]);
 			}
+
+			if (args[0].Equals("repair"))
+			{
+				RepairVehicle(logger);
+			}
+
+			if (args[0].Equals("clean"))
+			{
+				CleanVehicle(logger);
+			}
+
 		}
 
 		private static async void SpawnVehicle(ILogger logger, string modelName)
@@ -38,28 +47,29 @@ namespace NFive.Debug.Client.Commands
 				var model = new Model(modelHash);
 				var vehicle = await World.CreateVehicle(model, player.Position, 0f);
 
-				// Set Vehicle Entity as Mission Entity
-				Function.Call(Hash.SET_ENTITY_AS_MISSION_ENTITY, vehicle, true, false);
+				// Set fancy license plate name
+				vehicle.Mods.LicensePlate = " N5 Dev ";
 
-
-				// Set vehicle as Owned by player
-				Function.Call(Hash.SET_VEHICLE_HAS_BEEN_OWNED_BY_PLAYER, vehicle, true);
-
-
-				// Set Vehicle does not have to be hotwired
-				Function.Call(Hash.SET_VEHICLE_NEEDS_TO_BE_HOTWIRED, vehicle, false);
-
-
-				// Delete model from memory
-				Function.Call(Hash.SET_MODEL_AS_NO_LONGER_NEEDED, model);
-
-				// Set fancy license plate
-				Function.Call(Hash.SET_VEHICLE_NUMBER_PLATE_TEXT_INDEX, vehicle, LicensePlateStyle.BlueOnWhite3);
-				Function.Call(Hash.SET_VEHICLE_NUMBER_PLATE_TEXT, vehicle, " N5 Dev ");
+				// Set fancy license plate style
+				vehicle.Mods.LicensePlateStyle = LicensePlateStyle.BlueOnWhite3;
 
 				// Warp player in to driver seat
 				player.SetIntoVehicle(vehicle, VehicleSeat.Driver);
 			}
+		}
+
+		private static void RepairVehicle(ILogger logger)
+		{
+			var vehicle = Game.Player.Character.CurrentVehicle;
+			vehicle.EngineHealth = 1000;
+			vehicle.IsEngineRunning = true;
+			vehicle.Repair();
+		}
+
+		private static void CleanVehicle(ILogger logger)
+		{
+			var vehicle = Game.Player.Character.CurrentVehicle;
+			vehicle.DirtLevel = 0f;
 		}
 	}
 }
