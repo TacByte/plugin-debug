@@ -46,6 +46,7 @@ namespace NFive.Debug.Client
 			this.Commands.Register("ipl-load", a => IplCommands.Load(this.Logger, a));
 			this.Commands.Register("ipl-unload", a => IplCommands.Unload(this.Logger, a));
 			this.Commands.Register("inv", a => PlayerCommands.Invincible(this.Logger, a.ToList()));
+			this.Commands.Register("veh", a => VehicleCommands.Spawn(this.Logger, a.ToList()));
 
 			this.Ticks.Attach(new Action(Tick));
 		}
