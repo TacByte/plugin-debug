@@ -1,8 +1,8 @@
+using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using NFive.SDK.Core.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
-using CitizenFX.Core;
-using CitizenFX.Core.Native;
 
 namespace NFive.Debug.Client.Commands
 {
@@ -10,52 +10,53 @@ namespace NFive.Debug.Client.Commands
 	{
 		public static void Spawn(ILogger logger, List<string> args)
 		{
-
 			if (!args.Any())
 			{
-				logger.Debug("Vehicle Commands: Missing arguments");
+				logger.Warn("Vehicle command: Missing arguments");
+				return;
 			}
 
-			if (args[0].Equals("spawn"))
+			switch (args[0].Trim().ToLower())
 			{
-				SpawnVehicle(logger, args[1]);
-			}
+				case "spawn":
+					SpawnVehicle(logger, args[1].Trim());
+					break;
 
-			if (args[0].Equals("repair"))
-			{
-				RepairVehicle(logger);
-			}
+				case "repair":
+					RepairVehicle(logger);
+					break;
 
-			if (args[0].Equals("clean"))
-			{
-				CleanVehicle(logger);
-			}
+				case "clean":
+					CleanVehicle(logger);
+					break;
 
+				default:
+					logger.Warn("Vehicle command: Unknown command");
+					break;
+			}
 		}
 
 		private static async void SpawnVehicle(ILogger logger, string modelName)
 		{
+			var model = new Model(API.GetHashKey(modelName));
+
+			if (!model.IsValid)
+			{
+				logger.Warn("Vehicle Spawn command: Invalid model");
+				return;
+			}
+
 			var player = Game.Player.Character;
-			var modelHash = API.GetHashKey(modelName);
+			var vehicle = await World.CreateVehicle(model, player.Position, 0f);
 
-			if (!API.IsModelValid((uint) modelHash))
-			{
-				logger.Debug("Vehicle Spawn Command: Invalid model");
-			}
-			else
-			{
-				var model = new Model(modelHash);
-				var vehicle = await World.CreateVehicle(model, player.Position, 0f);
+			// Set fancy license plate name
+			vehicle.Mods.LicensePlate = " N5 Dev ";
 
-				// Set fancy license plate name
-				vehicle.Mods.LicensePlate = " N5 Dev ";
+			// Set fancy license plate style
+			vehicle.Mods.LicensePlateStyle = LicensePlateStyle.BlueOnWhite3;
 
-				// Set fancy license plate style
-				vehicle.Mods.LicensePlateStyle = LicensePlateStyle.BlueOnWhite3;
-
-				// Warp player in to driver seat
-				player.SetIntoVehicle(vehicle, VehicleSeat.Driver);
-			}
+			// Warp player in to driver seat
+			player.SetIntoVehicle(vehicle, VehicleSeat.Driver);
 		}
 
 		private static void RepairVehicle(ILogger logger)
